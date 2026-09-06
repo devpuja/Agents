@@ -1,0 +1,16 @@
+# agent-framework-azure-ai --pre
+# agent-framework-openai
+# firecrawl-py
+# httpx
+# python-dotenv
+
+fastapi
+uvicorn
+openai
+chromadb
+sqlalchemy
+sentence-transformers
+requests
+agent-framework
+python-dotenv
+httpx
