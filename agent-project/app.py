@@ -1,15 +1,16 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from agents.chat_agent import ChatAgent
+from agents.orchestrator_agent import OrchestratorAgent
+
 
 app = FastAPI()
-agent = ChatAgent()
+agent = OrchestratorAgent()
 
 class Request(BaseModel):
     message: str
 
 
 @app.post("/chat")
-async def chat(request: Request):
-    response = agent.run(request.message)
+async def chat(req: Request):
+    response = agent.orchestrate2(req.message)
     return {"response": response}
