@@ -1,11 +1,8 @@
 
+from typing import Any, Dict, List
 from services.chroma_service import search
 
 class ResearchAgent:
-    def research(self, query: str) -> str:
-        docs = search(query)
-
-        if not docs:
-            return f"No relevant results found for: {query}"
-        
-        return "\n".join(docs)
+    def research(self, query: str) -> Dict[str, List[Any]]:
+        results = search(query)
+        return results

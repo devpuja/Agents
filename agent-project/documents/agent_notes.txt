@@ -1,0 +1,2 @@
+Microsoft Agent Framework supports memory and tools.
+This is successor of Semantic Kernel.

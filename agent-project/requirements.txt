@@ -14,3 +14,4 @@ requests
 agent-framework
 python-dotenv
 httpx
+pytest

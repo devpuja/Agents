@@ -1,0 +1,5 @@
+Microsoft Agent Framework is used to build AI agents.
+
+An agent can use tools, memory and planning.
+
+The framework supports multi-agent

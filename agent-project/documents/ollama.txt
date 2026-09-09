@@ -1,0 +1,3 @@
+Ollama allows running large language models locally.
+
+Popular models include Llama 3.1, Qwen and Mistral.
