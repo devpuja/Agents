@@ -15,4 +15,4 @@ def ask_llm(prompt: str) -> str:
     )
     return response.choices[0].message.content or ""
 
-print(ask_llm("What is the capital of Bihar?"))
+#print(ask_llm("What is the capital of Bihar?"))
