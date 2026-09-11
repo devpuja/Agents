@@ -7,6 +7,7 @@ class MemoryAgent:
     def history(self) -> None:
         get_history()
 
+
     def recent_context(self, limit: int = 5) -> str:
         history_data = get_history()
 
@@ -20,6 +21,7 @@ class MemoryAgent:
             conversations.append(f"Assistant: {assistant_msg}")
 
         return "\n".join(conversations)
+    
     
     def recall(self, keyword:str) -> str:
         memory = search_memory(keyword)

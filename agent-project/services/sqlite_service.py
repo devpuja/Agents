@@ -42,17 +42,21 @@ def get_history():
     )
     return cursor.fetchall()
 
-def search_memory(keyword: str):
+
+def search_memory(keyword: str, limit: int = 5):
     cursor.execute(
         """
-        SELECT user_message,
-               assistant_message
+        SELECT user_message, assistant_message
         FROM chat_history
         WHERE user_message LIKE ?
         ORDER BY id DESC
-        LIMIT 5
+        LIMIT ?
         """,
-        (f"%{keyword}%",)
+        (
+            f"%{keyword}%",
+            limit
+        )
     )
+
     return cursor.fetchall()
     
