@@ -30,14 +30,18 @@ class OrchestratorAgent:
 
         router_decision = self.router.route(user_input)
         logger.info("ROUTER DECISION: %s", router_decision)
+        
+        memory_context = self.memory.recent_context()
+        logger.info("MEMORY CONTEXT: %s", memory_context)
 
         # TOOL Flow
         if router_decision == "TOOL":
             tool_result = self.tool_agent.execute(user_input)
-            self.memory.save(user_input, tool_result)
+            tool_answer = "" if tool_result is None else str(tool_result)
+            self.memory.save(user_input, tool_answer)
             return {
                 "plan": "Tool Execution",
-                "answer": tool_result
+                "answer": tool_answer
             }
 
         # CHAT Flow & RESEARCH Flow #
@@ -49,7 +53,7 @@ class OrchestratorAgent:
 
         logger.info("RESEARCH: %s", research_result)
 
-        answer = self.writer.write_task(user_input, research_result)
+        answer = self.writer.write_task(user_input, research_result, memory_context)
 
         self.memory.save(user_input, answer)
 

@@ -2,7 +2,7 @@ from typing import Any, Dict, List
 from services.ollama_service import ask_llm
 
 class WriterAgent:
-    def write_task(self, task: str, research_result: Dict[str, List[Any]]) -> str:
+    def write_task(self, task: str, research_result: Dict[str, List[Any]], memory_context: str) -> str:
         documents = research_result.get("documents", [])
         
         metadatas = research_result.get("metadatas", [])
@@ -13,6 +13,8 @@ class WriterAgent:
         
         prompt = f""" You are a technical assistant.
         Task: {task}
+        
+        Conversation Memory: {memory_context}
         
         Retrieved Context: {context}
         

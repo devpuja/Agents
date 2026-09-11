@@ -27,12 +27,10 @@ def save_chat(user: str, assistant: str):
         """,
         (user, assistant)
     )
-
     conn.commit()
 
 
 def get_history():
-
     cursor.execute(
         """
         SELECT user_message,
@@ -42,5 +40,19 @@ def get_history():
         LIMIT 10
         """
     )
-
     return cursor.fetchall()
+
+def search_memory(keyword: str):
+    cursor.execute(
+        """
+        SELECT user_message,
+               assistant_message
+        FROM chat_history
+        WHERE user_message LIKE ?
+        ORDER BY id DESC
+        LIMIT 5
+        """,
+        (f"%{keyword}%",)
+    )
+    return cursor.fetchall()
+    
