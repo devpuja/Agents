@@ -14,11 +14,15 @@ class ToolRouterAgent:
             2. CALCULATOR
             - mathematical calculations
             - arithmetic expressions
+            
+            3. RANDOM
+            - generate random numbers
 
             Return ONLY one value:
 
             DATETIME
             CALCULATOR
+            RANDOM
             NONE
 
             User Request:
@@ -28,11 +32,14 @@ class ToolRouterAgent:
             """
             
         response = ask_llm(prompt).strip().upper()
+        print(f"[ToolRouter] Processed Response: {response}")
                 
         match response:
             case "DATETIME":
                 return "DATETIME"
             case "CALCULATOR":
                 return "CALCULATOR"
+            case "RANDOM":
+                return "RANDOM"
             case _:
                 return "NONE"
