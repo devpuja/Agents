@@ -24,14 +24,18 @@ class MemoryAgent:
     
     
     def recall(self, keyword:str) -> str:
-        memory = search_memory(keyword)
+        print(f"[MemoryAgent] Searching for: {keyword}")
+        
+        memories = search_memory(keyword)
+        
+        print(f"[MemoryAgent] Retrieved: {memories}")
 
-        if not memory:
+        if not memories:
             return ""
 
         result: list[str] = []
 
-        for user, assistant in memory:
+        for user, assistant in memories:
             result.append(f"User: {user}")
             result.append(f"Assistant: {assistant}")
 

@@ -40,9 +40,12 @@ class OrchestratorAgent:
         print("TOPIC:", topic)
         
         #memory_context = self.memory.recent_context()
+        print("Before Memory Recall")
         memory_context = ""
         if self.memory_router_agent.should_recall(user_input):
             memory_context = self.memory.recall(topic)
+        
+        print("After Memory Recall")
         
         logger.info("MEMORY CONTEXT: %s", memory_context)
         print("MEMORY CONTEXT:", memory_context)

@@ -48,7 +48,8 @@ def search_memory(keyword: str, limit: int = 5):
         """
         SELECT user_message, assistant_message
         FROM chat_history
-        WHERE user_message LIKE ?
+        WHERE LOWER(user_message) LIKE LOWER(?)
+        AND user_message NOT LIKE '%?'
         ORDER BY id DESC
         LIMIT ?
         """,
@@ -60,3 +61,19 @@ def search_memory(keyword: str, limit: int = 5):
 
     return cursor.fetchall()
     
+
+# print(search_memory("What is my name?"))
+# print("\n\n+++++++++++++++++++++\n")
+# print(search_memory("What database do I prefer?"))
+# print("\n\n+++++++++++++++++++++\n")
+# print(search_memory("What do I work on?"))
+
+print(search_memory("name"))
+print("\n\n+++++++++++++++++++++\n")
+print(search_memory("my name"))
+print("\n\n+++++++++++++++++++++\n")
+print(search_memory("database"))
+print("\n\n+++++++++++++++++++++\n")
+print(search_memory("favorite"))
+print("\n\n+++++++++++++++++++++\n")
+print(search_memory("work"))
