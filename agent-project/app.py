@@ -1,6 +1,5 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from pydantic import BaseModel
-from fastapi import UploadFile, File
 from agents.orchestrator_agent import OrchestratorAgent
 from services.file_storage_service import FileStorageService
 from services.indexing_service import IndexingService
@@ -23,12 +22,14 @@ async def chat(req: Request):
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
     # Save the uploaded file to the "documents" directory
-    content = await file.read()
+    
     file_name = file.filename
-    if file_name is None:
+    if not file_name:
         raise HTTPException(status_code=400, detail="Uploaded file must include a filename.")
-
-    storage_service.save_file(file_name, content)
-    indexing_service.index_documents(file_name, 1000)
+    
+    content = await file.read()
+    
+    file_path = storage_service.save_file(file_name, content)
+    indexing_service.index_documents(file_path, 1000)
     return {"info": f"File '{file_name}' uploaded and indexed successfully."}
     

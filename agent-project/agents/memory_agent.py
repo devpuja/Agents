@@ -39,8 +39,4 @@ class MemoryAgent:
             result.append(f"User: {user}")
             result.append(f"Assistant: {assistant}")
 
-        return "\n".join(result)    
-        
-        
-        
-        
+        return "\n".join(result)

@@ -7,7 +7,7 @@ collection = client.get_or_create_collection(COLLECTION_NAME)
 
 
 def add_document_chunk(text: str, doc_name: str, chunk_id: int):
-    collection.add(
+    collection.upsert(
         documents=[text],
         ids=[f"{doc_name}_chunk_{chunk_id}"],
         metadatas=[{"source": doc_name, "chunk_id": chunk_id}]
@@ -39,3 +39,6 @@ def reset_collection():
         pass
 
     collection = client.get_or_create_collection(COLLECTION_NAME)
+    
+
+#print(search("What is CAP Theorem?"))

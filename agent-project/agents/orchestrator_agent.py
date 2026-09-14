@@ -34,15 +34,19 @@ class OrchestratorAgent:
         router_decision = self.router.route(user_input)
         logger.info("ROUTER DECISION: %s", router_decision)
         print("ROUTER DECISION:", router_decision)
-        
-        topic = self.memory_router_agent.extract_memory_topic(user_input)
-        topic = topic.split("\n")[0].strip()
-        print("TOPIC:", topic)
-        
+
         #memory_context = self.memory.recent_context()
+        
         print("Before Memory Recall")
+        
+        should_recall = self.memory_router_agent.should_recall(user_input)
+        print("SHOULD RECALL:", should_recall)
+        
         memory_context = ""
-        if self.memory_router_agent.should_recall(user_input):
+        if should_recall:
+            topic = self.memory_router_agent.extract_memory_topic(user_input)
+            topic = topic.split("\n")[0].strip()
+            print("TOPIC:", topic)
             memory_context = self.memory.recall(topic)
         
         print("After Memory Recall")
@@ -82,4 +86,10 @@ class OrchestratorAgent:
             "answer": answer
         }
         
+        
+print("\n===================================")
+#print(OrchestratorAgent().orchestrate("What is CAP Theorem?"))
+#print("\n++++++++++++++++++++++++++++++++++++++++++++++++++\n")
 print(OrchestratorAgent().orchestrate("What database do I prefer?"))
+# print("\n++++++++++++++++++++++++++++++++++++++++++++++++++\n")
+# print(OrchestratorAgent().orchestrate("What database does the document recommend?"))

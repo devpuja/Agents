@@ -60,20 +60,3 @@ def search_memory(keyword: str, limit: int = 5):
     )
 
     return cursor.fetchall()
-    
-
-# print(search_memory("What is my name?"))
-# print("\n\n+++++++++++++++++++++\n")
-# print(search_memory("What database do I prefer?"))
-# print("\n\n+++++++++++++++++++++\n")
-# print(search_memory("What do I work on?"))
-
-print(search_memory("name"))
-print("\n\n+++++++++++++++++++++\n")
-print(search_memory("my name"))
-print("\n\n+++++++++++++++++++++\n")
-print(search_memory("database"))
-print("\n\n+++++++++++++++++++++\n")
-print(search_memory("favorite"))
-print("\n\n+++++++++++++++++++++\n")
-print(search_memory("work"))
