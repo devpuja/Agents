@@ -87,9 +87,9 @@ class OrchestratorAgent:
         }
         
         
-print("\n===================================")
+#print("\n===================================")
 #print(OrchestratorAgent().orchestrate("What is CAP Theorem?"))
 #print("\n++++++++++++++++++++++++++++++++++++++++++++++++++\n")
-print(OrchestratorAgent().orchestrate("What database do I prefer?"))
+#print(OrchestratorAgent().orchestrate("What database do I prefer?"))
 # print("\n++++++++++++++++++++++++++++++++++++++++++++++++++\n")
 # print(OrchestratorAgent().orchestrate("What database does the document recommend?"))
