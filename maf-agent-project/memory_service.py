@@ -1,7 +1,6 @@
 import sqlite3
 from pathlib import Path
 
-
 DB_PATH = Path("data/memory.db")
 
 
@@ -39,5 +38,26 @@ def get_memory(key: str) -> str | None:
             (key,))
 
         row = cursor.fetchone()
-
         return row[0] if row else None
+    
+    
+def get_all_memories() -> list[tuple[str, str]]:
+    with sqlite3.connect(DB_PATH) as conn:
+        cursor = conn.execute("""
+            SELECT memory_key, memory_value
+            FROM memories
+        """)
+        return cursor.fetchall()
+
+
+def search_memories(keyword: str) -> list[tuple[str, str]]:
+    search_term = f"%{keyword.lower()}%"
+
+    with sqlite3.connect(DB_PATH) as conn:
+        cursor = conn.execute("""
+            SELECT memory_key, memory_value
+            FROM memories
+            WHERE LOWER(memory_key) LIKE ?""", 
+            (search_term,))
+
+        return cursor.fetchall()
