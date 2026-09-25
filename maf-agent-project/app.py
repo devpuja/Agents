@@ -7,6 +7,13 @@ from agent_framework_ollama import OllamaChatClient
 from typing import Annotated
 from pydantic import Field
 
+from memory_provider import SimpleMemoryProvider
+from memory_service import initialize_database, save_memory
+
+initialize_database()
+
+save_memory("favorite_database", "PostgreSQL")
+
 @tool
 def calculate(expression: Annotated[str, Field(description="The arithmetic expression to calculate, such as '125 * 37'.")]) -> str:
     """
@@ -37,17 +44,26 @@ async def main():
             "Use the get_current_time tool whenever the user asks for the current date or time. "
             "Do not use a tool when it is not needed."
         ),
-        tools=[calculate, get_current_time]
+        tools=[calculate, get_current_time],
+        context_providers = [SimpleMemoryProvider("simple-memory")]
     )
     
     session = agent.create_session()
     
-    result = await agent.run("What is 125 * 37?", session=session)
-    print("Turn 1: ", result)
+    # ========================================================================= #
     
-    result = await agent.run("What was the result?", session=session)
-    print("Turn 2: ", result)
+    result = await agent.run("What is my favorite database?", session=session)
+    print(result)
     
+    # ========================================================================= #
+    
+    # result = await agent.run("What is 125 * 37?", session=session)
+    # print("Turn 1: ", result)
+    
+    # result = await agent.run("What was the result?", session=session)
+    # print("Turn 2: ", result)
+    
+    # ========================================================================= #
     # query = "What is 125 * 37?"
     # result = await agent.run(query)
     # print(result)
