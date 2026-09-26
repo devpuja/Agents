@@ -8,7 +8,7 @@ from typing import Annotated
 from pydantic import Field
 
 from memory_provider import SimpleMemoryProvider
-from memory_service import initialize_database, save_memory, search_memories
+from memory_service import initialize_database, save_memory, delete_memory, get_all_memories
 
 initialize_database()
 
@@ -31,17 +31,53 @@ def calculate(expression: Annotated[str, Field(description="The arithmetic expre
 def get_current_time() -> str:
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
+
 @tool
 def remember(key: str, value: str) -> str:
-    """Save a user preference or personal fact to persistent memory.
+    """Save or update a user's personal preference or fact in persistent memory."""
 
-    Use this tool when the user explicitly tells you a personal preference
-    or fact that should be remembered for future conversations.
-    Do not use it for general knowledge, temporary information, or questions.
-    """
-    save_memory(key, value)
-    
-    return f"Remembered: {key} = {value}"
+    if not key or not key.strip():
+        return "Memory was not saved because the key is empty."
+
+    if not value or value.strip().lower() in {
+        "none",
+        "null",
+        "unknown",
+        "n/a",
+    }:
+        return "Memory was not saved because the value is invalid."
+
+    normalized_key = key.strip().lower()
+
+    # Normalize different LLM-generated variations
+    # of the same database preference.
+    database_keywords = {
+        "database",
+        "db",
+        "favorite database",
+        "database preference",
+        "preferred database",
+    }
+
+    if (
+        any(keyword in normalized_key for keyword in database_keywords)
+        and (
+            "personal" in normalized_key
+            or "favorite" in normalized_key
+            or "preference" in normalized_key
+            or "preferred" in normalized_key
+        )
+    ):
+        normalized_key = "preferred_database_for_personal_projects"
+
+    print(
+        f"REMEMBER TOOL CALLED: "
+        f"key={normalized_key}, value={value}"
+    )
+
+    save_memory(normalized_key, value)
+
+    return f"Remembered: {normalized_key} = {value}"
 
     
 async def main():
@@ -51,56 +87,48 @@ async def main():
         instructions=(
             "You are a helpful assistant. "
             "Answer general knowledge questions directly using your own knowledge. "
+
             "Use the calculate tool whenever the user asks for an arithmetic calculation. "
             "Use the get_current_time tool whenever the user asks for the current date or time. "
+
+            "Use the remember tool ONLY when the user explicitly provides "
+            "a new personal fact, preference, or an updated preference that "
+            "should be saved for future conversations. "
+
+            "NEVER use the remember tool to answer a question about an "
+            "existing memory or preference. "
+            "For example, if the user asks 'What is my favorite database?', "
+            "do not call remember. "
+
             "Do not use a tool when it is not needed."
-            "Use the remember tool when the user explicitly asks you to remember a personal preference or fact."
-            "Do not save general knowledge or temporary information as memory."
         ),
         tools=[calculate, get_current_time, remember],
         context_providers = [SimpleMemoryProvider("simple-memory")]
     )
     
     session1 = agent.create_session()
-    #session2 = agent.create_session()
-    #session3 = agent.create_session()
+    session2 = agent.create_session()
+    session3 = agent.create_session()
+    session4 = agent.create_session()
     
     # ========================================================================= #
-    print(search_memories("personal"))
-    
-    result = await agent.run("What database do I prefer for personal projects?", session=session1)
-    print(result)
-    
-    # result = await agent.run("What is my favorite database?", session=session2)
-    # print(result)
-    
-    # result = await agent.run("What database do I prefer for my personal projects?", session=session3)
-    # print(result)
-    
-    # ========================================================================= #
-    
-    # result = await agent.run("What is 125 * 37?", session=session)
-    # print("Turn 1: ", result)
-    
-    # result = await agent.run("What was the result?", session=session)
-    # print("Turn 2: ", result)
-    
-    # ========================================================================= #
-    # query = "What is 125 * 37?"
-    # result = await agent.run(query)
-    # print(result)
-    
-    # query = "Calculate 15% of 2000."
-    # result = await agent.run(query)
-    # print(result)
-    
-    # query = "What is the current time?"
-    # result = await agent.run(query)
-    # print(result)
+    # delete_memory("cap theorem")
+    # delete_memory("preferred_database_for_personal_projects")
         
-    # query = "What is CAP Theorem?"
-    # result = await agent.run(query)
-    # print(result)
+    result = await agent.run("What is my favorite database?", session=session1)
+    print("What is my favorite database? =>", result,"\n")
+    
+    # result = await agent.run("What database do I prefer?", session=session2)
+    # print("What database do I prefer? =>", result, "\n")
+    
+    # result = await agent.run("What is CAP Theorem?", session=session3)
+    # print("What is CAP Theorem? =>", result, "\n")
+    
+    # result = await agent.run("What database do I prefer for my personal projects?", session=session4)
+    # print("What database do I prefer for my personal projects? =>" ,result, "\n")
+    
+    print(get_all_memories())
+    # ========================================================================= #
     
 
 if __name__ == "__main__":

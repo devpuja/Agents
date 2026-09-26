@@ -50,14 +50,38 @@ def get_all_memories() -> list[tuple[str, str]]:
         return cursor.fetchall()
 
 
-def search_memories(keyword: str) -> list[tuple[str, str]]:
-    search_term = f"%{keyword.lower()}%"
+def search_memories(keywords: list[str]) -> list[tuple[str, str]]:
+    if not keywords:
+        return []
+
+    conditions: list[str] = []
+    parameters: list[str] = []
+
+    for keyword in keywords:
+        conditions.append("LOWER(memory_key) LIKE ?")
+        parameters.append(f"%{keyword.lower()}%")
+
+    where_clause = " OR ".join(conditions)
 
     with sqlite3.connect(DB_PATH) as conn:
-        cursor = conn.execute("""
+        cursor = conn.execute(
+            f"""
             SELECT memory_key, memory_value
             FROM memories
-            WHERE LOWER(memory_key) LIKE ?""", 
-            (search_term,))
+            WHERE {where_clause}
+            """,
+            parameters
+        )
 
         return cursor.fetchall()
+    
+    
+def delete_memory(key: str) -> bool:
+    with sqlite3.connect(DB_PATH) as conn:
+        cursor = conn.execute("""
+            DELETE FROM memories
+            WHERE memory_key = ?""", (key,))
+
+        conn.commit()
+
+        return cursor.rowcount > 0
