@@ -103,13 +103,13 @@ async def main():
         context_providers = [SimpleMemoryProvider("simple-memory")]
     )
     
-    # session1 = agent.create_session()
+    session1 = agent.create_session()
     
     # ========================================================================= #
     # delete_memory("preferred_database_for_personal_projects")
         
-    # result = await agent.run("I prefer MySQL for my personal projects.", session=session1)
-    # print("I prefer MySQL for my personal projects. =>", result)
+    result = await agent.run("I prefer MySQL for my personal projects.", session=session1)
+    print("I prefer MySQL for my personal projects. =>", result)
     
     print(get_all_memories())
     # ========================================================================= #
