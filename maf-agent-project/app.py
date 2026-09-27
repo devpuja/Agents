@@ -8,7 +8,7 @@ from typing import Annotated
 from pydantic import Field
 
 from memory_provider import SimpleMemoryProvider
-from memory_service import initialize_database, save_memory, get_all_memories, delete_memory
+from memory_service import initialize_database, save_memory, get_all_memories # delete_memory
 
 initialize_database()
 
