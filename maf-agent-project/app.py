@@ -8,7 +8,7 @@ from typing import Annotated
 from pydantic import Field
 
 from memory_provider import SimpleMemoryProvider
-from memory_service import initialize_database, save_memory, delete_memory, get_all_memories
+from memory_service import initialize_database, save_memory, get_all_memories, delete_memory
 
 initialize_database()
 
@@ -70,10 +70,7 @@ def remember(key: str, value: str) -> str:
     ):
         normalized_key = "preferred_database_for_personal_projects"
 
-    print(
-        f"REMEMBER TOOL CALLED: "
-        f"key={normalized_key}, value={value}"
-    )
+    print(f"REMEMBER TOOL CALLED: key={normalized_key}, value={value}")
 
     save_memory(normalized_key, value)
 
@@ -106,26 +103,13 @@ async def main():
         context_providers = [SimpleMemoryProvider("simple-memory")]
     )
     
-    session1 = agent.create_session()
-    session2 = agent.create_session()
-    session3 = agent.create_session()
-    session4 = agent.create_session()
+    # session1 = agent.create_session()
     
     # ========================================================================= #
-    # delete_memory("cap theorem")
     # delete_memory("preferred_database_for_personal_projects")
         
-    result = await agent.run("What is my favorite database?", session=session1)
-    print("What is my favorite database? =>", result,"\n")
-    
-    # result = await agent.run("What database do I prefer?", session=session2)
-    # print("What database do I prefer? =>", result, "\n")
-    
-    # result = await agent.run("What is CAP Theorem?", session=session3)
-    # print("What is CAP Theorem? =>", result, "\n")
-    
-    # result = await agent.run("What database do I prefer for my personal projects?", session=session4)
-    # print("What database do I prefer for my personal projects? =>" ,result, "\n")
+    # result = await agent.run("I prefer MySQL for my personal projects.", session=session1)
+    # print("I prefer MySQL for my personal projects. =>", result)
     
     print(get_all_memories())
     # ========================================================================= #
