@@ -18,10 +18,33 @@ Multi-Agent
     Parallel multi-agent workflow     ✅
     Agent-as-tool                     ✅
     Agent delegation                  ✅
+    Structured outputs                ✅
 
 Remaining
-    Structured outputs                🔲 ← NEXT
-    Error handling / retries          🔲
+    Error handling / retries          🔲 ← NEXT
     Observability / tracing           🔲
     Guardrails / security             🔲
     Evaluation / testing              🔲
+
+
+================Error handling / Retries===============
+
+1. Simulate failure             ← NOW
+        ↓
+2. Observe exception propagation
+        ↓
+3. Add try/except
+        ↓
+4. Add retry
+        ↓
+5. Add maximum retry count
+        ↓
+6. Add timeout
+        ↓
+7. Handle partial specialist failure
+        ↓
+8. Add graceful fallback
+        ↓
+9. Test failure scenarios
+        ↓
+10. Mark Error Handling & Retries ✅
