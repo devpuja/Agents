@@ -1,19 +1,27 @@
-Phase 2 — MAF Core
+PHASE 2 — MAF CORE
+════════════════════════════════════════════
 
 Workflows
-├── Executors                         ✅
-├── Workflow edges                    ✅
-├── Agent as workflow node            ✅
-├── Sequential execution              ✅
-├── Parallel execution                ✅
-├── Fan-out                           ✅
-├── Fan-in                            ✅
-└── Agent → Agent workflow            ✅
+    Basic workflow                    ✅
+    Sequential execution              ✅
+    Parallel execution                ✅
+    Fan-out                           ✅
+    Fan-in                            ✅
 
-Multi-agent architecture              🔲
-Agents-as-tools / delegation          🔲
-Structured outputs                    🔲
-Error handling / retries              🔲
-Observability / tracing               🔲
-Guardrails / security                 🔲
-Evaluation / testing                  🔲
+Architecture
+    Manual workflow graph             ✅
+    Manual vs orchestration           ✅
+    ConcurrentBuilder                 ✅
+
+Multi-Agent
+    Multiple agents                   ✅
+    Parallel multi-agent workflow     ✅
+    Agent-as-tool                     ✅
+    Agent delegation                  ✅
+
+Remaining
+    Structured outputs                🔲 ← NEXT
+    Error handling / retries          🔲
+    Observability / tracing           🔲
+    Guardrails / security             🔲
+    Evaluation / testing              🔲
