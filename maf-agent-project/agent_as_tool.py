@@ -46,41 +46,6 @@ async def main():
     )
 
     # ==========================================
-    # Main Agent
-    # ==========================================
-
-    main_agent = Agent(
-        client=client,
-        name="MainAgent",
-        instructions=(
-            "You are the main technical assistant.\n\n"
-
-            "You have access to three specialist agents:\n"
-            "1. PostgreSQL specialist\n"
-            "2. MySQL specialist\n"
-            "3. Architecture specialist\n\n"
-
-            "Delegate questions to the appropriate specialist "
-            "when specialist expertise is useful.\n\n"
-
-            "For PostgreSQL-specific questions, use the "
-            "PostgreSQL specialist.\n"
-
-            "For MySQL-specific questions, use the "
-            "MySQL specialist.\n"
-
-            "For architecture questions, use the "
-            "Architecture specialist.\n\n"
-
-            "For comparison questions involving multiple areas, "
-            "you may consult multiple specialists.\n\n"
-
-            "After receiving specialist responses, synthesize "
-            "the information into a clear final answer."
-        ),
-    )
-
-    # ==========================================
     # Agent-as-tools
     # ==========================================
 
@@ -113,14 +78,39 @@ async def main():
         ),
     ]
 
+
+    # ==========================================
+    # Main Agent
+    # ==========================================
+
     main_agent = Agent(
         client=client,
         name="MainAgent",
         instructions=(
             "You are the main technical assistant.\n\n"
-            "You have access to PostgreSQL, MySQL, and architecture specialists. "
-            "Delegate questions to the appropriate specialist when useful, "
-            "then synthesize their responses into a clear final answer."
+
+            "You have access to three specialist agents:\n"
+            "1. PostgreSQL specialist\n"
+            "2. MySQL specialist\n"
+            "3. Architecture specialist\n\n"
+
+            "Delegate questions to the appropriate specialist "
+            "when specialist expertise is useful.\n\n"
+
+            "For PostgreSQL-specific questions, use the "
+            "PostgreSQL specialist.\n"
+
+            "For MySQL-specific questions, use the "
+            "MySQL specialist.\n"
+
+            "For architecture questions, use the "
+            "Architecture specialist.\n\n"
+
+            "For comparison questions involving multiple areas, "
+            "you may consult multiple specialists.\n\n"
+
+            "After receiving specialist responses, synthesize "
+            "the information into a clear final answer."
         ),
         tools=specialist_tools,
     )
