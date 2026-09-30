@@ -1,4 +1,5 @@
 import asyncio
+import random
 
 from pydantic import BaseModel
 from agent_framework import Agent
@@ -6,7 +7,7 @@ from agent_framework_ollama import OllamaChatClient
 
 
 # ============================================================
-# 1. STRUCTURED OUTPUT MODEL
+# STRUCTURED OUTPUT MODELS
 # ============================================================
 
 class PostgreSQLInfo(BaseModel):
@@ -14,10 +15,12 @@ class PostgreSQLInfo(BaseModel):
     strengths: list[str]
     use_cases: list[str]
 
+
 class MySQLInfo(BaseModel):
     name: str
     strengths: list[str]
     use_cases: list[str]
+
 
 class ArchitectureInfo(BaseModel):
     factors: list[str]
@@ -27,32 +30,44 @@ class ArchitectureInfo(BaseModel):
     performance: str
     trade_offs: list[str]
 
-class DatabaseComparison(BaseModel):
-    postgresql: PostgreSQLInfo
-    mysql: MySQLInfo
-    architecture: ArchitectureInfo
-    summary: str
-    
-    
+
 # ============================================================
-# 2. OLLAMA CLIENT
+# ERROR TYPES
+# ============================================================
+
+class RetryableError(Exception):
+    pass
+
+
+class NonRetryableError(Exception):
+    pass
+
+
+class SpecialistTimeoutError(RetryableError):
+    pass
+
+
+# ============================================================
+# OLLAMA CLIENT
 # ============================================================
 
 client = OllamaChatClient(model="llama3.1:latest")
 
+
 # ============================================================
-# 3. POSTGRESQL SPECIALIST
+# SPECIALIST AGENTS
 # ============================================================
 
 postgres_agent = Agent(
     client=client,
     name="PostgreSQLAgent",
     instructions=(
-        "You are a PostgreSQL specialist.\n\n"
-        "Answer questions about PostgreSQL accurately.\n"
+        "You are a PostgreSQL specialist. "
+        "Answer questions about PostgreSQL accurately. "
         "Focus on PostgreSQL strengths, features, and use cases."
     )
 )
+
 
 mysql_agent = Agent(
     client=client,
@@ -61,8 +76,9 @@ mysql_agent = Agent(
         "You are a MySQL specialist. "
         "Answer questions specifically about MySQL. "
         "Provide accurate and concise technical information."
-    ),
+    )
 )
+
 
 architecture_agent = Agent(
     client=client,
@@ -70,72 +86,33 @@ architecture_agent = Agent(
     instructions=(
         "You are a software architecture specialist. "
         "Focus on scalability, reliability, performance, "
-        "security, maintainability, and architectural "
-        "trade-offs."
-    ),
+        "security, maintainability, and architectural trade-offs."
+    )
 )
 
 
 # ============================================================
-# 4. TOOL / ADAPTER
+# SPECIALIST CALLS
 # ============================================================
 
-# async def ask_postgresql_specialist(task: str) -> PostgreSQLInfo:
-#     response = await postgres_agent.run(
-#         task,
-#         options={
-#             "response_format": PostgreSQLInfo
-#         }
-#     )
-
-#     print("\n========== SPECIALIST RESPONSE ==========")
-#     print(response)
-
-#     print("\n========== RESPONSE TYPE ==========")
-#     print(type(response))
-
-#     structured_value = getattr(response, "value", None)
-
-#     print("\n========== STRUCTURED VALUE ==========")
-#     print(structured_value)
-
-#     print("\n========== STRUCTURED VALUE TYPE ==========")
-#     print(type(structured_value).__name__)
-
-#     if structured_value is None:
-#         raise RuntimeError(
-#             "PostgreSQLAgent did not return a structured value."
-#         )
-
-#     return structured_value
-
-async def ask_postgresql_with_retry(task: str, max_retries: int = 3):
-
-    for attempt in range(1, max_retries + 1):
-
-        try:
-            print(f"\nAttempt {attempt}...")
-
-            result = await ask_postgresql_specialist(task)
-
-            print("PostgreSQL specialist succeeded.")
-            return result
-
-        except RuntimeError as e:
-
-            print(f"Attempt {attempt} failed: {e}")
-
-            if attempt == max_retries:
-                print("Maximum retry attempts reached.")
-                raise
-
-            print("Retrying...")
-            
-            
 async def ask_postgresql_specialist(task: str) -> PostgreSQLInfo:
-    raise RuntimeError("Simulated PostgreSQL specialist failure")
-    
-    
+    response = await postgres_agent.run(
+        task,
+        options={
+            "response_format": PostgreSQLInfo
+        }
+    )
+
+    structured_value = getattr(response, "value", None)
+
+    if structured_value is None:
+        raise RuntimeError(
+            "PostgreSQLAgent did not return a structured value."
+        )
+
+    return structured_value
+
+
 async def ask_mysql_specialist(task: str) -> MySQLInfo:
     response = await mysql_agent.run(
         task,
@@ -144,19 +121,7 @@ async def ask_mysql_specialist(task: str) -> MySQLInfo:
         }
     )
 
-    print("\n========== SPECIALIST RESPONSE ==========")
-    print(response)
-
-    print("\n========== RESPONSE TYPE ==========")
-    print(type(response))
-
     structured_value = getattr(response, "value", None)
-
-    print("\n========== STRUCTURED VALUE ==========")
-    print(structured_value)
-
-    print("\n========== STRUCTURED VALUE TYPE ==========")
-    print(type(structured_value).__name__)
 
     if structured_value is None:
         raise RuntimeError(
@@ -174,19 +139,7 @@ async def ask_architecture_specialist(task: str) -> ArchitectureInfo:
         }
     )
 
-    print("\n========== SPECIALIST RESPONSE ==========")
-    print(response)
-
-    print("\n========== RESPONSE TYPE ==========")
-    print(type(response))
-
     structured_value = getattr(response, "value", None)
-
-    print("\n========== STRUCTURED VALUE ==========")
-    print(structured_value)
-
-    print("\n========== STRUCTURED VALUE TYPE ==========")
-    print(type(structured_value).__name__)
 
     if structured_value is None:
         raise RuntimeError(
@@ -197,101 +150,101 @@ async def ask_architecture_specialist(task: str) -> ArchitectureInfo:
 
 
 # ============================================================
-# 5. MAIN AGENT
+# TIMEOUT
 # ============================================================
 
-# async def main():
-#     main_agent = Agent(
-#         client=client,
-#         name="DatabaseAgent",
-#         instructions=(
-#             "You are the main database assistant.\n\n"
+async def call_postgresql_with_timeout(
+    task: str,
+    timeout_seconds: int = 30
+) -> PostgreSQLInfo:
 
-#             "You have access to three specialist tools:\n"
-            
-#             "1. ask_postgresql_specialist - use this for "
-#             "PostgreSQL-specific questions.\n"
-            
-#             "2. ask_mysql_specialist - use this for "
-#             "MySQL-specific questions.\n"
-            
-#             "3. ask_architecture_specialist - use this for "
-#             "database architecture, scalability, reliability, "
-#             "security, performance, and architectural trade-off questions.\n\n"
+    print(
+        f"\n========== TIMEOUT CONFIG ==========\n"
+        f"Timeout configured: {timeout_seconds} seconds"
+    )
 
-#             "When a question involves multiple areas, "
-#             "call all relevant specialist tools.\n\n"
+    try:
+        async with asyncio.timeout(timeout_seconds):
 
-#             "After receiving the specialist responses, "
-#             "synthesize their information into a clear answer for the user."
-#         ),
-#         tools=[
-#             ask_postgresql_specialist,
-#             ask_mysql_specialist,
-#             ask_architecture_specialist
-#         ]
-#     )
+            result = await ask_postgresql_specialist(task)
 
+            print("\n========== TIMEOUT WRAPPER RESULT ==========")
+            print(result)
+            print(type(result))
+
+            return result
+
+    except TimeoutError:
+        raise SpecialistTimeoutError(
+            f"PostgreSQL specialist timed out after "
+            f"{timeout_seconds} seconds."
+        )
+
+
+# ============================================================
+# RETRY WITH EXPONENTIAL BACKOFF + JITTER
+# ============================================================
+
+async def ask_postgresql_with_retry(task: str, max_retries: int = 3) -> PostgreSQLInfo:
+    for attempt in range(1, max_retries + 1):
+        try:
+            print(f"\nAttempt {attempt}...")
+
+            result = await call_postgresql_with_timeout(task)
+            print("PostgreSQL specialist succeeded.")
+            return result
+        
+        except RetryableError as e:
+            print(f"Retryable error on attempt {attempt}: {e}")
+            if attempt == max_retries:
+                print("Maximum retry attempts reached.")
+                raise
+
+            base_delay = 2 ** (attempt - 1)
+            jitter = random.uniform(0, 0.5)
+            delay = base_delay + jitter
+
+            print(f"Waiting {delay:.6f} seconds before retry...")
+
+            await asyncio.sleep(delay)
+            print("Retrying...")
+
+        except NonRetryableError as e:
+            print(f"Non-retryable error: {e}")
+            print("Failing immediately. No retry.")
+            raise
+
+
+# ============================================================
+# MAIN
+# ============================================================
 
 async def main():
 
-    print("\n========== RETRY TEST ==========")
+    print("========== DIRECT SPECIALIST TEST ==========")
 
-    try:
-        result = await ask_postgresql_with_retry(
-            "What are the main strengths of PostgreSQL?"
-        )
+    result = await ask_postgresql_specialist("What are the main strengths of PostgreSQL?")
 
-        print("\n========== FINAL RESULT ==========")
-        print(result)
+    print("\n========== RESULT ==========")
+    print(result)
 
-    except Exception as e:
-        print("\n========== FINAL FAILURE ==========")
-        print("Error:", e)
+    print("\n========== TYPE ==========")
+    print(type(result))
 
+    print("\n========== NAME ==========")
+    print(result.name)
 
-    # ========================================================
-    # 6. RUN MAIN AGENT
-    # ========================================================
+    print("\n========== STRENGTHS ==========")
+    for strength in result.strengths:
+        print("-", strength)
 
-    # result = await main_agent.run("What are the main strengths of PostgreSQL?")
-    # result = await main_agent.run("What are the main strengths of MySQL?")
-    # result = await main_agent.run(
-    #     "Compare PostgreSQL and MySQL for an enterprise application. "
-    #     "What architectural factors should I consider?",
-    #     options={
-    #         "response_format": DatabaseComparison
-    #         }
-    # )
-
-
-    # ========================================================
-    # 7. FINAL MAIN AGENT RESPONSE
-    # ========================================================
-
-    # print("\n\n========== FINAL ANSWER ==========")
-    # print(result)
-    # comparison = result.value
-
-    # if comparison is not None:
-    #     print("\nPostgreSQL object:")
-    #     print(comparison.postgresql)
-    #     print(type(comparison.postgresql))
-
-    #     print("\nMySQL object:")
-    #     print(comparison.mysql)
-    #     print(type(comparison.mysql))
-
-    #     print("\nArchitecture object:")
-    #     print(comparison.architecture)
-    #     print(type(comparison.architecture))
-
-    #     print("\nSummary:")
-    #     print(comparison.summary)
+    print("\n========== USE CASES ==========")
+    for use_case in result.use_cases:
+        print("-", use_case)
 
 
 # ============================================================
-# 8. APPLICATION ENTRY POINT
+# APPLICATION ENTRY POINT
 # ============================================================
 
 if __name__ == "__main__":
