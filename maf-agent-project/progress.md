@@ -36,6 +36,11 @@ Observability / Tracing
     Specialist tracing                 ✅
     Multi-agent tracing concept        ✅
 
+Guardrails / Security
+    Input guardrail                    ✅
+    Guardrail violation handling       ✅
+    Tool authorization                 ✅
+    Structured output validation       ✅
+
 Remaining
-    Guardrails / security              🔲 ← NEXT
-    Evaluation / testing               🔲
+    Evaluation / testing               🔲 ← NEXT
