@@ -42,5 +42,8 @@ Guardrails / Security
     Tool authorization                 ✅
     Structured output validation       ✅
 
-Remaining
-    Evaluation / testing               🔲 ← NEXT
+Evaluation / Testing
+    Happy-path evaluation              ✅
+    Structured-output evaluation       ✅
+    Tool-usage evaluation              ✅
+    Guardrail evaluation               ✅
