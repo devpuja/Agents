@@ -24,3 +24,11 @@ lib/
 # OS files
 .DS_Store
 Thumbs.db
+
+
+# Local databases / vector stores
+*.db
+chroma/
+chromadb/
+chroma_db/
+data/
