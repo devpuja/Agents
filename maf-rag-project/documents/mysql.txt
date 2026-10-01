@@ -1,0 +1,4 @@
+MySQL is an open-source relational database management system.
+It is known for performance, ease of use, scalability, and a large
+ecosystem. MySQL is commonly used for web applications, e-commerce,
+content management systems, and transactional applications.

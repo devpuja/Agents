@@ -142,6 +142,7 @@ Should I remember this?
      Decision
         ↓
    Store / Don't store
+
 5. Semantic/vector memory
 
 Status: 🔲 Optional
@@ -227,6 +228,7 @@ you'll get something like:
 This connects directly to enterprise application development.
 
 11. Error handling / retries
+
 Agent
  ↓
 Tool
@@ -236,6 +238,7 @@ Failure
 Retry / fallback
  ↓
 Result
+
 12. Observability / tracing
 
 Critical AI-architecture topic:
@@ -266,6 +269,7 @@ data boundaries
 unsafe tool calls
 input/output validation
 least privilege
+
 14. Evaluation / testing
 
 We'll move beyond:
@@ -320,6 +324,7 @@ This is the important architecture exercise:
 
 And understand why each exists.
 
+
 Phase 4 — Production / Architecture
 
 This is where the project becomes valuable as an AI Architect portfolio project.
@@ -350,6 +355,7 @@ MAF
 Agents / Workflow
  ↓
 Tools / RAG / Memory
+
 21. Persistence strategy
 
 Understand:
@@ -359,6 +365,7 @@ PostgreSQL
 vector DB
 conversation state
 application state
+
 22. Authentication / authorization
 
 Especially important when agents can invoke tools.

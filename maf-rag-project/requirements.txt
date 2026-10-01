@@ -1,0 +1,6 @@
+requests
+python-dotenv
+chromadb
+agent_framework
+agent_framework_ollama
+agent-framework-orchestrations
